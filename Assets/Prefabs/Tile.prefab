@@ -56,7 +56,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 58e754943cd88d84db81d2aa14de8f67, type: 2}
+  - {fileID: 2100000, guid: 5f281e5d3a48e454c831700722680e0b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -104,3 +104,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d18c0cb2bae349f489648edfde8172d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  redTile: {r: 1, g: 0, b: 0, a: 0}
+  blueTile: {r: 0, g: 0, b: 1, a: 0}
+  greenTile: {r: 0, g: 1, b: 0, a: 0}
+  yellowTile: {r: 1, g: 1, b: 0, a: 0}
+  brownTile: {r: 0.4, g: 0.2, b: 0, a: 0}
+  purpleTile: {r: 1, g: 0, b: 1, a: 0}
+  whiteTile: {r: 1, g: 1, b: 1, a: 0}

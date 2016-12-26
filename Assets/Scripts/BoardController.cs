@@ -51,9 +51,11 @@ public class BoardController : MonoBehaviour {
             for (int boardY = 0; boardY < Constants.BOARDSIZE; boardY++)
             {
                 GameObject tempTile = Instantiate(TilePrefab);
-
+                //parent the transform with the board
                 tempTile.transform.SetParent(transform);
-
+                //tell the tile its coordinates so it can tell the board when it is seleted
+                tempTile.GetComponent<TileController>().setCoords(boardX, boardY);
+                //add the tile to the board array
                 TileArray[boardX, boardY] = tempTile;
 
             
