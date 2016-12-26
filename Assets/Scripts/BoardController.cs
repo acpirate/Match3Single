@@ -30,12 +30,12 @@ public class BoardController : MonoBehaviour {
         {
             for (int boardY = 0; boardY < Constants.BOARDSIZE; boardY++)
             {
-                Debug.Log(boardX + " " + boardY);
+                //Debug.Log(boardX + " " + boardY);
                 float tileX = boardLeft + tileSpacing * boardX;
                 float tileZ = boardBottom + tileSpacing * boardY;
                 Vector3 tilePosition = new Vector3(tileX, 1, tileZ);
 
-                Debug.Log(TileArray[boardX, boardY]);
+                //Debug.Log(TileArray[boardX, boardY]);
 
                 TileArray[boardX, boardY].transform.position = tilePosition;
 
