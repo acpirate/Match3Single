@@ -82,3 +82,33 @@ public struct Coords
         return x.ToString() + "," + y.ToString();
     }
 }
+
+
+public struct Match
+{
+    public List<Coords> matchCoords;
+    public TILETYPE matchType;
+
+    public Match(TILETYPE inShape)
+    {
+        matchCoords = new List<Coords>();
+        matchType = inShape;
+
+    }
+
+    // Override the ToString
+    public override string ToString()
+    {
+        string matchString = "";
+
+        matchString += "- " + matchCoords.Count.ToString() + " piece match of type " + matchType.ToString() + "\n";
+        matchString += "- Coords: ";
+
+        foreach (Coords coords in matchCoords)
+        {
+            matchString += coords.ToString() + "|";
+        }
+
+        return matchString;
+    }
+}

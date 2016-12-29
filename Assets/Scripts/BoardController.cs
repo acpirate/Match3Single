@@ -9,6 +9,7 @@ public class BoardController : MonoBehaviour {
     public float boardBottom = -7f;
     public float tileSpacing = 2f;
 
+    public MatchController matchController;
 
     GameObject[,] TileArray;
 
@@ -16,7 +17,6 @@ public class BoardController : MonoBehaviour {
 	void Start () {
         TileArray = new GameObject[Constants.BOARDSIZE,Constants.BOARDSIZE];
         CreateBoard();
-        SnapPositionTiles();
 	}
 	
 	// Update is called once per frame
@@ -43,8 +43,14 @@ public class BoardController : MonoBehaviour {
         }
     }
 
-    void CreateBoard()
+    public void CreateBoard()
     {
+        //resets the board before it can be created
+        foreach (GameObject tile in TileArray)
+        {
+            if (tile != null) Destroy(tile);
+        }
+
 
         for (int boardX = 0; boardX < Constants.BOARDSIZE; boardX++)
         {
@@ -63,5 +69,32 @@ public class BoardController : MonoBehaviour {
             }
         }
 
+        SnapPositionTiles();
+
+    }
+
+    public void ToggleCoords()
+    {
+        foreach (GameObject tile in TileArray)
+        {
+            tile.GetComponent<TileController>().ToggleCoordsDisplay();
+        }
+    }
+
+    public void SetTileTypeFromString(int tileX, int tileY, string typeString)
+    {
+        TileArray[tileX, tileY].GetComponent<TileController>().SetTileTypeFromString(typeString);
+    }
+
+    public GameObject getTileAtCoords(Coords tileCoords)
+    {
+
+        return TileArray[tileCoords.x, tileCoords.y];
+
+    }
+
+    public List<Match> getBaseMatches()
+    {
+        return matchController.getBaseMatches();
     }
 }

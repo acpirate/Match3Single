@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public enum TILETYPE { RED, BLUE, GREEN, YELLOW, BROWN, PURPLE, WHITE };
+public enum TILETYPE { RED, BLUE, GREEN, YELLOW, BROWN, PURPLE, WHITE, NONE };
 
 public class TileController : MonoBehaviour {
 
-    TILETYPE myType;
+    Text myCoordDisplay;
+
+    public TILETYPE myType;
 
     Vector3 originalPosition;
     bool isSelected = false;
@@ -23,6 +26,12 @@ public class TileController : MonoBehaviour {
 
     Material myMaterial;
     Coords myCoords;
+
+    void Awake()
+    {
+        myCoordDisplay = GetComponentInChildren<Text>();
+    }
+
 
 	// Use this for initialization
 	void Start () {
@@ -50,9 +59,20 @@ public class TileController : MonoBehaviour {
         }
     }
 
+    public void ToggleCoordsDisplay()
+    {
+        if (myCoordDisplay.text != "")
+        {
+            myCoordDisplay.text = ""; }
+        else {
+            myCoordDisplay.text = myCoords.ToString();
+        }
+    }
+
     public void setCoords(int x, int y)
     {
         myCoords = new Coords(x, y);
+        //myCoordDisplay.text = myCoords.ToString();
     }
 
     void SelectionAnimation()
@@ -68,7 +88,10 @@ public class TileController : MonoBehaviour {
 
     void Randomize()
     {
-        myType = HelperObjects.GetRandomEnum<TILETYPE>();
+        myType = TILETYPE.NONE;
+
+        while (myType.Equals(TILETYPE.NONE))
+            myType = HelperObjects.GetRandomEnum<TILETYPE>();
 
         switch (myType)
         {
@@ -98,6 +121,47 @@ public class TileController : MonoBehaviour {
                 Application.Quit();
                 break;
         }
+    }
+        
+    public void SetTileTypeFromString(string tileString)
+    {
+        if (tileString.Equals("BLUE"))
+        {
+            myType = TILETYPE.BLUE;
+            myMaterial.color = blueTile;
+        }
+        if (tileString.Equals("BROWN"))
+        {
+            myType = TILETYPE.BROWN;
+            myMaterial.color = brownTile;
+        }
+        if (tileString.Equals("GREEN"))
+        {
+            myType = TILETYPE.GREEN;
+            myMaterial.color = greenTile;
+        }
+        if (tileString.Equals("PURPLE"))
+        {
+            myType = TILETYPE.PURPLE;
+            myMaterial.color = purpleTile;
+        }
+        if (tileString.Equals("RED"))
+        {
+            myType = TILETYPE.RED;
+            myMaterial.color = redTile;
+        }
+        if (tileString.Equals("WHITE"))
+        {
+            myType = TILETYPE.WHITE;
+            myMaterial.color = whiteTile;
+        }
+        if (tileString.Equals("YELLOW"))
+        {
+            myType = TILETYPE.YELLOW;
+            myMaterial.color = yellowTile;
+        }
+
+
     }
 
 
