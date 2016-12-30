@@ -27,17 +27,22 @@ public class TileController : MonoBehaviour {
     Material myMaterial;
     Coords myCoords;
 
+    BoardController boardController;
+
     void Awake()
     {
         myCoordDisplay = GetComponentInChildren<Text>();
+        myMaterial = GetComponent<MeshRenderer>().material;
+
+        boardController = GameObject.FindGameObjectWithTag("Board").GetComponent<BoardController>();
+
+        Randomize();
     }
 
 
 	// Use this for initialization
 	void Start () {
-        myMaterial = GetComponent<MeshRenderer>().material;
 
-        Randomize();
 	}
 	
 	// Update is called once per frame
@@ -47,8 +52,15 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseDown()
     {
-       // Debug.Log("selected " + myCoords.ToString());
-        if (!(isSelected)) {
+        // Debug.Log("selected " + myCoords.ToString());
+        ToggleSelected();
+        boardController.TileSelected(gameObject);
+    }
+
+    public void ToggleSelected()
+    {
+        if (!(isSelected))
+        {
             isSelected = true;
             originalPosition = transform.position;
         }
@@ -86,7 +98,7 @@ public class TileController : MonoBehaviour {
         transform.position = newPosition;
     }
 
-    void Randomize()
+    public void Randomize()
     {
         myType = TILETYPE.NONE;
 

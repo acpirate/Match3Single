@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour {
 
+    GameObject selectedTile;
+
     public GameObject TilePrefab;
     public float boardLeft = -7f;
     public float boardBottom = -7f;
@@ -17,6 +19,9 @@ public class BoardController : MonoBehaviour {
 	void Start () {
         TileArray = new GameObject[Constants.BOARDSIZE,Constants.BOARDSIZE];
         CreateBoard();
+        PreventInitialMatches();
+
+        selectedTile = null;
 	}
 	
 	// Update is called once per frame
@@ -69,8 +74,36 @@ public class BoardController : MonoBehaviour {
             }
         }
 
+
         SnapPositionTiles();
 
+    }
+
+    void PreventInitialMatches()
+    {
+
+        //prevent initial board from having any matches
+        List<Match> currentMatches = new List<Match>();
+        currentMatches = getBaseMatches();
+        //avoid infinite loop
+        int initialMatchCounter = 0;
+        while (currentMatches.Count > 0)
+        {
+            initialMatchCounter++;
+            foreach (Match match in currentMatches)
+            {
+                foreach (Coords matchCoords in match.matchCoords)
+                {
+                    //Debug.Log(matchCoords.x + " ," + matchCoords.y);
+                    TileArray[matchCoords.x, matchCoords.y].GetComponent<TileController>().Randomize();
+                }
+            }
+
+            currentMatches = getBaseMatches();
+            //prevent infinte loop
+            if (initialMatchCounter > 10) currentMatches = new List<Match>();
+        }
+        //Debug.Log("loops until no matches " + initialMatchCounter);
     }
 
     public void ToggleCoords()
@@ -96,5 +129,82 @@ public class BoardController : MonoBehaviour {
     public List<Match> getBaseMatches()
     {
         return matchController.getBaseMatches();
+    }
+
+    public List<GameObject> GetNeighbors(GameObject queriedPiece)
+    {
+        List<GameObject> returnNeighbors = new List<GameObject>();
+
+        Coords pieceIndex = GetIndexOf(queriedPiece);
+
+        //south neighbor
+        if (pieceIndex.y > 0) returnNeighbors.Add(TileArray[pieceIndex.x, pieceIndex.y - 1]);
+        //north neighbor
+        if (pieceIndex.y < Constants.BOARDSIZE - 1) returnNeighbors.Add(TileArray[pieceIndex.x, pieceIndex.y + 1]);
+        //east neighbor
+        if (pieceIndex.x > 0) returnNeighbors.Add(TileArray[pieceIndex.x - 1, pieceIndex.y]);
+        //west neighbor
+        if (pieceIndex.x < Constants.BOARDSIZE - 1) returnNeighbors.Add(TileArray[pieceIndex.x + 1, pieceIndex.y]);
+
+
+        //Debug.Log(returnNeighbors.Count);
+
+        return returnNeighbors;
+    }
+
+
+    public Coords GetIndexOf(GameObject queriedPiece)
+    {
+        Coords returnCoords = new Coords(-1, -1);
+
+
+        for (int colCounter = 0; colCounter < Constants.BOARDSIZE; colCounter++)
+        {
+            for (int rowCounter = 0; rowCounter < Constants.BOARDSIZE; rowCounter++)
+            {
+                if (TileArray[colCounter, rowCounter] == queriedPiece)
+                {
+                    returnCoords.x = colCounter;
+                    returnCoords.y = rowCounter;
+                    break;
+                }
+                if (returnCoords.x != -1 && returnCoords.y != -1) break;
+            }
+        }
+        //sanity checking
+        if (returnCoords.x == -1 && returnCoords.y == -1)
+        {
+            Debug.LogError("tried to get the index of a piece that isn't on the board");
+            Application.Quit();
+        }
+
+        return returnCoords;
+    }
+
+    public void TileSelected(GameObject clickedTile)
+    {
+        //no tile selected
+        if (selectedTile == null) {
+            selectedTile = clickedTile;
+        }
+        //a tile is selected
+        else
+        {
+            //clicked tile is next to currently selected tile
+            if (GetNeighbors(clickedTile).Contains(selectedTile))
+            {
+                Debug.Log("valid swap!");
+                selectedTile.GetComponent<TileController>().ToggleSelected();
+                clickedTile.GetComponent<TileController>().ToggleSelected();
+                selectedTile = null;
+            }
+            //clicked tile is not next to currently selected tile
+            else
+            {
+                selectedTile.GetComponent<TileController>().ToggleSelected();
+                selectedTile = clickedTile;
+            }
+        }
+
     }
 }
