@@ -13,7 +13,13 @@ public class BoardController : MonoBehaviour {
 
     public MatchController matchController;
 
+    float tileReturnDelay = .3f;
+    float tileReturnTime;
+
+    //gameboard
     GameObject[,] TileArray;
+    //call for snap tile position
+    bool callSnap = false;
 
     // Use this for initialization
 	void Start () {
@@ -26,8 +32,21 @@ public class BoardController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+	    if (GameController.gameState == GameState.CANTCLICK && Time.time > tileReturnTime)
+        {
+            callSnap = true;
+            GameController.gameState = GameState.CANCLICK;
+        }	
 	}
+
+    void LateUpdate()
+    {
+      if (callSnap)
+        {
+            SnapPositionTiles();
+            callSnap = false;
+        }
+    }
 
     public void SnapPositionTiles()
     {
@@ -38,14 +57,25 @@ public class BoardController : MonoBehaviour {
                 //Debug.Log(boardX + " " + boardY);
                 float tileX = boardLeft + tileSpacing * boardX;
                 float tileZ = boardBottom + tileSpacing * boardY;
-                Vector3 tilePosition = new Vector3(tileX, 1, tileZ);
+                Vector3 tilePosition = CalculateWorldPosition(boardX, boardY);
 
                 //Debug.Log(TileArray[boardX, boardY]);
 
                 TileArray[boardX, boardY].transform.position = tilePosition;
-
+                TileArray[boardX, boardY].transform.rotation = Quaternion.identity;
+                TileArray[boardX, boardY].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                TileArray[boardX, boardY].GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
         }
+    }
+
+    public void SnapPositionIndividualTile(GameObject tileToSnap)
+    {
+        Coords tileCoords = GetIndexOf(tileToSnap);
+        float tileX = boardLeft + tileSpacing * tileCoords.x;
+        float tileZ = boardLeft + tileSpacing * tileCoords.y;
+
+        Vector3 tilePosition = new Vector3(tileX, 1, tileZ);
     }
 
     public void CreateBoard()
@@ -63,9 +93,9 @@ public class BoardController : MonoBehaviour {
             {
                 GameObject tempTile = Instantiate(TilePrefab);
                 //parent the transform with the board
-                tempTile.transform.SetParent(transform);
+            //    tempTile.transform.SetParent(transform);
                 //tell the tile its coordinates so it can tell the board when it is seleted
-                tempTile.GetComponent<TileController>().setCoords(boardX, boardY);
+                tempTile.GetComponent<TileController>().setCoords(new Coords(boardX, boardY));
                 //add the tile to the board array
                 TileArray[boardX, boardY] = tempTile;
 
@@ -84,7 +114,7 @@ public class BoardController : MonoBehaviour {
 
         //prevent initial board from having any matches
         List<Match> currentMatches = new List<Match>();
-        currentMatches = getBaseMatches();
+        currentMatches = GetBaseMatches();
         //avoid infinite loop
         int initialMatchCounter = 0;
         while (currentMatches.Count > 0)
@@ -99,7 +129,7 @@ public class BoardController : MonoBehaviour {
                 }
             }
 
-            currentMatches = getBaseMatches();
+            currentMatches = GetBaseMatches();
             //prevent infinte loop
             if (initialMatchCounter > 10) currentMatches = new List<Match>();
         }
@@ -119,18 +149,21 @@ public class BoardController : MonoBehaviour {
         TileArray[tileX, tileY].GetComponent<TileController>().SetTileTypeFromString(typeString);
     }
 
-    public GameObject getTileAtCoords(Coords tileCoords)
+    //returns the tile object as the array coordinates
+    public GameObject GetTileAtCoords(Coords tileCoords)
     {
 
         return TileArray[tileCoords.x, tileCoords.y];
 
     }
 
-    public List<Match> getBaseMatches()
+    //returns the matches of 3+ in a straight line
+    public List<Match> GetBaseMatches()
     {
         return matchController.getBaseMatches();
     }
 
+    //returns up, down, left right neighbors of the input tile as a list
     public List<GameObject> GetNeighbors(GameObject queriedPiece)
     {
         List<GameObject> returnNeighbors = new List<GameObject>();
@@ -152,7 +185,7 @@ public class BoardController : MonoBehaviour {
         return returnNeighbors;
     }
 
-
+    //returns the coordinates of the chosen tile
     public Coords GetIndexOf(GameObject queriedPiece)
     {
         Coords returnCoords = new Coords(-1, -1);
@@ -181,6 +214,9 @@ public class BoardController : MonoBehaviour {
         return returnCoords;
     }
 
+
+    //attempts to select a tile
+    //if the a neighbor tile is already selected a swap will be attempted
     public void TileSelected(GameObject clickedTile)
     {
         //no tile selected
@@ -193,7 +229,7 @@ public class BoardController : MonoBehaviour {
             //clicked tile is next to currently selected tile
             if (GetNeighbors(clickedTile).Contains(selectedTile))
             {
-                Debug.Log("valid swap!");
+                HandleSwap(clickedTile, selectedTile);
                 selectedTile.GetComponent<TileController>().ToggleSelected();
                 clickedTile.GetComponent<TileController>().ToggleSelected();
                 selectedTile = null;
@@ -206,5 +242,42 @@ public class BoardController : MonoBehaviour {
             }
         }
 
+    }
+
+    public void HandleSwap(GameObject tile1, GameObject tile2)
+    {
+    //    Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
+
+
+        TileController tile1Controller = tile1.GetComponent<TileController>();
+        TileController tile2Controller = tile2.GetComponent<TileController>();
+
+        GameObject tempTile = tile1;
+
+        Coords tile1Coords = GetIndexOf(tile1);
+        Coords tile2Coords = GetIndexOf(tile2);
+
+        //switch tiles in board
+        TileArray[tile1Coords.x, tile1Coords.y] = tile2;
+        tile2Controller.setCoords(tile1Coords);
+        TileArray[tile2Coords.x, tile2Coords.y] = tempTile;
+        tile1Controller.setCoords(tile2Coords);
+        //reset tile positions
+        //callSnap = true;
+        tile1.GetComponent<Rigidbody>().AddExplosionForce(500f, new Vector3(0, -.5f, 0f), 0f);
+        tile2.GetComponent<Rigidbody>().AddExplosionForce(500f, new Vector3(0, -.5f, 0f), 0f);
+        GameController.gameState = GameState.CANTCLICK;
+        tileReturnTime = Time.time + tileReturnDelay;
+    }
+
+
+    public Vector3 CalculateWorldPosition(int col, int row)
+    {
+        float xPosition = boardLeft + col * tileSpacing;
+        float yPosition = boardBottom + row * tileSpacing;
+
+        Vector3 piecePosition = new Vector3(xPosition, 1f, yPosition);
+
+        return piecePosition;
     }
 }

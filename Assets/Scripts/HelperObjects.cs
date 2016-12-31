@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// Naming convention: 
+/// Class methods upper case start: ThisIsAClassMethodName
+/// </summary>
+
 public static class HelperObjects  {
 
     //get a random item of the given type

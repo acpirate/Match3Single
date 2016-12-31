@@ -221,14 +221,14 @@ public class TerminalController : MonoBehaviour {
         if (splitCommand[0].ToUpper() != "LISTBASEMATCHES") return;
         commandHandled = true;
 
-        List<Match> matches = boardController.getBaseMatches();
+        List<Match> matches = boardController.GetBaseMatches();
 
         if (matches.Count < 1)
         {
             AddLineToTerminalDisplay(" - NO MATCHES");
             return;
         }
-        foreach (Match match in boardController.getBaseMatches())
+        foreach (Match match in boardController.GetBaseMatches())
         {
             AddLineToTerminalDisplay(match.ToString());
         }

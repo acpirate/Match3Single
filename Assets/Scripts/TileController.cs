@@ -52,9 +52,11 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        // Debug.Log("selected " + myCoords.ToString());
-        ToggleSelected();
-        boardController.TileSelected(gameObject);
+        if (GameController.gameState == GameState.CANCLICK)
+        {
+            ToggleSelected();
+            boardController.TileSelected(gameObject);
+        }
     }
 
     public void ToggleSelected()
@@ -81,10 +83,9 @@ public class TileController : MonoBehaviour {
         }
     }
 
-    public void setCoords(int x, int y)
+    public void setCoords(Coords inCoords)
     {
-        myCoords = new Coords(x, y);
-        //myCoordDisplay.text = myCoords.ToString();
+        myCoords = inCoords;
     }
 
     void SelectionAnimation()
