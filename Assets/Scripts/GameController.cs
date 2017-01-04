@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GameState {CANCLICK, CANTCLICK}
-
 public class GameController : MonoBehaviour {
 
-    public static GameState gameState = GameState.CANCLICK;
+    public static GAMESTATE gameState = GAMESTATE.CANSELECT;
 
 	// Use this for initialization
 	void Start () {

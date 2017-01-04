@@ -6,7 +6,19 @@ using UnityEngine;
 /// <summary>
 /// Naming convention: 
 /// Class methods upper case start: ThisIsAClassMethodName
+/// Enumerated types names all caps : THISISANENUMTYPENAME
+/// Enumerated values all caps: THISISANENUMVALUE
+/// Class member variables camel case: thisIsAClassVariable
 /// </summary>
+
+
+public enum SWAPDIRECTION { UP, DOWN, LEFT, RIGHT};
+
+public enum TILETYPE { RED, BLUE, GREEN, YELLOW, BROWN, PURPLE, WHITE, NONE };
+
+
+public enum GAMESTATE { CANSELECT, CANTSELECT, TRYSWAP, RETURNSWAP, REPLACEMATCHES};
+
 
 public static class HelperObjects  {
 
@@ -116,5 +128,35 @@ public struct Match
         }
 
         return matchString;
+    }
+}
+
+public struct Swap
+{
+    public Coords piece1Coords;
+    public Coords piece2Coords;
+
+    public Swap (Coords piece1InCoords, Coords piece2InCoords)
+    {
+        piece1Coords = piece1InCoords;
+        piece2Coords = piece2InCoords;
+    }
+
+    public SWAPDIRECTION SwapType()
+    {
+        SWAPDIRECTION myType = SWAPDIRECTION.UP;
+
+        if (piece1Coords.x > piece2Coords.x) myType = SWAPDIRECTION.LEFT;
+        if (piece1Coords.x < piece2Coords.x) myType = SWAPDIRECTION.RIGHT;
+        if (piece1Coords.y > piece2Coords.y) myType = SWAPDIRECTION.UP;
+        if (piece1Coords.y < piece2Coords.y) myType = SWAPDIRECTION.DOWN;
+
+        return myType;
+    }
+
+    // Override the ToString
+    public override string ToString()
+    {
+        return "piece1: " + piece1Coords.ToString() + " piece2: " + piece2Coords.ToString();
     }
 }

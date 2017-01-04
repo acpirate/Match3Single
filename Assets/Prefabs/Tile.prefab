@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 114094452227338736}
   m_Layer: 0
   m_Name: Tile
-  m_TagString: Untagged
+  m_TagString: Tile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -135,7 +135,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 0
-  m_MotionVectors: 1
+  m_MotionVectors: 0
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
@@ -171,7 +171,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1523582189994150}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -208,6 +208,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d18c0cb2bae349f489648edfde8172d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RemoveTileVFXPrefab: {fileID: 1720628213345606, guid: 447130c2777524645b0a77ae56ee8541,
+    type: 2}
+  myType: 0
   redTile: {r: 1, g: 0, b: 0, a: 0}
   blueTile: {r: 0, g: 0, b: 1, a: 0}
   greenTile: {r: 0, g: 1, b: 0, a: 0}

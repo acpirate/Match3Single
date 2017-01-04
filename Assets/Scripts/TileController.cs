@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum TILETYPE { RED, BLUE, GREEN, YELLOW, BROWN, PURPLE, WHITE, NONE };
 
 public class TileController : MonoBehaviour {
 
     Text myCoordDisplay;
+
+    public GameObject RemoveTileVFXPrefab;
 
     public TILETYPE myType;
 
@@ -52,7 +53,7 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        if (GameController.gameState == GameState.CANCLICK)
+        if (GameController.gameState == GAMESTATE.CANSELECT)
         {
             ToggleSelected();
             boardController.TileSelected(gameObject);
@@ -174,8 +175,25 @@ public class TileController : MonoBehaviour {
             myMaterial.color = yellowTile;
         }
 
-
     }
 
+    public void RemoveForMatch()
+    {
+        GameObject tempVFX = Instantiate(RemoveTileVFXPrefab, transform.position, Quaternion.identity);
+
+        ParticleSystem vfxSystem = tempVFX.GetComponentInChildren<ParticleSystem>();
+
+        vfxSystem.Stop();
+        vfxSystem.Clear();
+
+
+        var main = vfxSystem.main;
+        Color tempColor = myMaterial.GetColor("_Color");
+        tempColor = new Color(tempColor.r, tempColor.g, tempColor.b, 1);
+        main.startColor = tempColor;
+       tempVFX.GetComponentInChildren<ParticleSystem>().Play();
+        Destroy(tempVFX, 3f);
+        Destroy(gameObject);
+    }
 
 }

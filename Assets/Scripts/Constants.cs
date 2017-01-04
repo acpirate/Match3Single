@@ -5,5 +5,6 @@ using UnityEngine;
 public class Constants  {
 
    public static readonly int BOARDSIZE = 8;
+   public static readonly float SWAPANIMATIONTIME = .5f;
 
 }

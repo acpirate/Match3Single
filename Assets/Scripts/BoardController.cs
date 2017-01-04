@@ -7,14 +7,19 @@ public class BoardController : MonoBehaviour {
     GameObject selectedTile;
 
     public GameObject TilePrefab;
+
     public float boardLeft = -7f;
     public float boardBottom = -7f;
     public float tileSpacing = 2f;
 
     public MatchController matchController;
+    public GameObject SwapAnimPrefab;
 
     float tileReturnDelay = .3f;
-    float tileReturnTime;
+    float endSwapAnimTime;
+
+    Swap triedSwap;
+    Swap nullSwap;
 
     //gameboard
     GameObject[,] TileArray;
@@ -23,6 +28,9 @@ public class BoardController : MonoBehaviour {
 
     // Use this for initialization
 	void Start () {
+        nullSwap = new Swap(new Coords(-9999, -9999), new Coords(-9999, -9999));
+        triedSwap = nullSwap;
+
         TileArray = new GameObject[Constants.BOARDSIZE,Constants.BOARDSIZE];
         CreateBoard();
         PreventInitialMatches();
@@ -32,11 +40,16 @@ public class BoardController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	    if (GameController.gameState == GameState.CANTCLICK && Time.time > tileReturnTime)
+	    if (GameController.gameState == GAMESTATE.TRYSWAP && Time.time > endSwapAnimTime)
+        {
+            //callSnap = true;
+            CheckMatches();
+        }	
+        if (GameController.gameState == GAMESTATE.RETURNSWAP && Time.time > endSwapAnimTime)
         {
             callSnap = true;
-            GameController.gameState = GameState.CANCLICK;
-        }	
+            GameController.gameState = GAMESTATE.CANSELECT;
+        }
 	}
 
     void LateUpdate()
@@ -46,6 +59,40 @@ public class BoardController : MonoBehaviour {
             SnapPositionTiles();
             callSnap = false;
         }
+    }
+
+
+    void RemoveMatchedTiles()
+    {
+        GameController.gameState = GAMESTATE.REPLACEMATCHES;
+        foreach (Match match in GetBaseMatches())
+        {
+            foreach(Coords coord in match.matchCoords)
+            {
+                TileArray[coord.x, coord.y].GetComponent<TileController>().RemoveForMatch();
+            }
+        }
+    }
+
+    //check to see if there are any matches after a swap
+    void CheckMatches()
+    {
+        //failed to find any matches
+        if (matchController.getBaseMatches().Count<1)
+        {
+            ReturnSwap();   
+        }
+        else
+        {
+            RemoveMatchedTiles();
+        }
+    }
+
+    //return tiles if there is no match
+    void ReturnSwap()
+    {
+        HandleSwap(TileArray[triedSwap.piece1Coords.x, triedSwap.piece1Coords.y],
+            TileArray[triedSwap.piece2Coords.x, triedSwap.piece2Coords.y]);
     }
 
     public void SnapPositionTiles()
@@ -63,8 +110,8 @@ public class BoardController : MonoBehaviour {
 
                 TileArray[boardX, boardY].transform.position = tilePosition;
                 TileArray[boardX, boardY].transform.rotation = Quaternion.identity;
-                TileArray[boardX, boardY].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-                TileArray[boardX, boardY].GetComponent<Rigidbody>().velocity = Vector3.zero;
+                //TileArray[boardX, boardY].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                //TileArray[boardX, boardY].GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
         }
     }
@@ -229,7 +276,9 @@ public class BoardController : MonoBehaviour {
             //clicked tile is next to currently selected tile
             if (GetNeighbors(clickedTile).Contains(selectedTile))
             {
-                HandleSwap(clickedTile, selectedTile);
+                //fire the handle swap method
+                HandleSwap(selectedTile, clickedTile);
+                //unselect the tiles
                 selectedTile.GetComponent<TileController>().ToggleSelected();
                 clickedTile.GetComponent<TileController>().ToggleSelected();
                 selectedTile = null;
@@ -248,7 +297,6 @@ public class BoardController : MonoBehaviour {
     {
     //    Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
 
-
         TileController tile1Controller = tile1.GetComponent<TileController>();
         TileController tile2Controller = tile2.GetComponent<TileController>();
 
@@ -257,17 +305,46 @@ public class BoardController : MonoBehaviour {
         Coords tile1Coords = GetIndexOf(tile1);
         Coords tile2Coords = GetIndexOf(tile2);
 
-        //switch tiles in board
+        //board logic, switch tiles in board and tell the tile what its new coordinates are
         TileArray[tile1Coords.x, tile1Coords.y] = tile2;
         tile2Controller.setCoords(tile1Coords);
         TileArray[tile2Coords.x, tile2Coords.y] = tempTile;
         tile1Controller.setCoords(tile2Coords);
-        //reset tile positions
-        //callSnap = true;
-        tile1.GetComponent<Rigidbody>().AddExplosionForce(500f, new Vector3(0, -.5f, 0f), 0f);
-        tile2.GetComponent<Rigidbody>().AddExplosionForce(500f, new Vector3(0, -.5f, 0f), 0f);
-        GameController.gameState = GameState.CANTCLICK;
-        tileReturnTime = Time.time + tileReturnDelay;
+
+        //set the position of the swap handler object between the tiles
+        Vector3 swapHandlerPostion = (tile1.transform.position + tile2.transform.position) / 2;
+
+        //instantiate the swap handler
+        GameObject swapHandler = Instantiate(SwapAnimPrefab, swapHandlerPostion, Quaternion.identity);
+
+        //parent the tiles to the swap handler
+        tile1.transform.parent = swapHandler.transform;
+        tile2.transform.parent = swapHandler.transform;
+       
+
+        //create the tried swap
+        if (triedSwap.Equals(nullSwap))
+        {
+            triedSwap = new Swap(tile1Coords, tile2Coords);
+            GameController.gameState = GAMESTATE.TRYSWAP;
+        }
+        else
+        {
+            GameController.gameState = GAMESTATE.RETURNSWAP;
+        }
+        //determine swap direction
+        SWAPDIRECTION swapDirection = triedSwap.SwapType();
+
+        if (GameController.gameState == GAMESTATE.RETURNSWAP)
+        {
+            swapDirection = new Swap(triedSwap.piece2Coords, triedSwap.piece1Coords).SwapType();
+            triedSwap = nullSwap;
+
+        }
+        //set the correct direction in the swap handler
+        swapHandler.GetComponent<SwapAnimationScript>().myDirection = swapDirection;
+
+        endSwapAnimTime = Time.time + Constants.SWAPANIMATIONTIME;
     }
 
 
