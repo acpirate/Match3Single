@@ -72,7 +72,67 @@ public class BoardController : MonoBehaviour {
                 TileArray[coord.x, coord.y].GetComponent<TileController>().RemoveForMatch();
             }
         }
+        MoveTilesDown();
+        SnapPositionTiles();
+        ReplaceRemovedTiles();
+
     }
+
+    void MoveTilesDown()
+    {
+        for (int col = 0; col<Constants.BOARDSIZE; col++)
+        {
+            int missingCounter = 0;
+            for(int row = 0; row<Constants.BOARDSIZE; row++)
+            {
+                if (TileArray[col, row].GetComponent<TileController>().dead)
+                {
+                  //  Debug.Log("tile missing at " + col + "," + row);
+                    missingCounter++;
+                  //  Debug.Log("missing counter is " + missingCounter);
+                    TileArray[col, row] = null;
+                }
+                else
+                {
+                    if (missingCounter>0)
+                    {
+                    //    Debug.Log("moving tile " + col + "," + row + "down");
+                        GameObject tempTile = TileArray[col, row];
+
+                        TileArray[col, row - missingCounter] = tempTile;
+                        tempTile.GetComponent<TileController>().setCoords(new Coords(col, row - missingCounter));
+                     //   Debug.Log("new coods for moved tile are " + col + "," + (row-missingCounter));
+                        TileArray[col, row] = null;
+                    }
+                }
+            }
+        }
+    }
+
+    void ReplaceRemovedTiles()
+    {
+        for (int col = 0; col<Constants.BOARDSIZE; col++)
+        {
+            for (int row =0; row<Constants.BOARDSIZE; row++)
+            {
+                if (TileArray[col, row]==null)
+                {
+                    SpawnTile(col, row);
+                }
+            }
+        }
+        SnapPositionTiles();
+        GameController.gameState = GAMESTATE.CANSELECT;
+        triedSwap = nullSwap;
+    }
+
+    void SpawnTile(int col, int row)
+    {
+        GameObject tempTile = Instantiate(TilePrefab);
+        tempTile.GetComponent<TileController>().setCoords(new Coords(col, row));
+        TileArray[col, row] = tempTile;
+    }
+
 
     //check to see if there are any matches after a swap
     void CheckMatches()
@@ -108,8 +168,11 @@ public class BoardController : MonoBehaviour {
 
                 //Debug.Log(TileArray[boardX, boardY]);
 
-                TileArray[boardX, boardY].transform.position = tilePosition;
-                TileArray[boardX, boardY].transform.rotation = Quaternion.identity;
+                if (TileArray[boardX, boardY] != null)
+                {
+                    TileArray[boardX, boardY].transform.position = tilePosition;
+                    TileArray[boardX, boardY].transform.rotation = Quaternion.identity;
+                }
                 //TileArray[boardX, boardY].GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
                 //TileArray[boardX, boardY].GetComponent<Rigidbody>().velocity = Vector3.zero;
             }
@@ -145,13 +208,8 @@ public class BoardController : MonoBehaviour {
                 tempTile.GetComponent<TileController>().setCoords(new Coords(boardX, boardY));
                 //add the tile to the board array
                 TileArray[boardX, boardY] = tempTile;
-
-            
-           
             }
         }
-
-
         SnapPositionTiles();
 
     }
@@ -295,7 +353,7 @@ public class BoardController : MonoBehaviour {
 
     public void HandleSwap(GameObject tile1, GameObject tile2)
     {
-    //    Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
+        Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
 
         TileController tile1Controller = tile1.GetComponent<TileController>();
         TileController tile2Controller = tile2.GetComponent<TileController>();

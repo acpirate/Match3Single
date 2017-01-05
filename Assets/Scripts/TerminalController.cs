@@ -134,6 +134,8 @@ public class TerminalController : MonoBehaviour {
 
         AddLineToTerminalDisplay(" - toggling the coordinate display");
 
+        HelperObjects.showCoords = !HelperObjects.showCoords;
+
     }
 
     void SetTile(string[] splitCommand)

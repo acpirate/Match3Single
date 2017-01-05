@@ -16,6 +16,8 @@ public class TileController : MonoBehaviour {
     bool isSelected = false;
     float selectionOffset = .1f;
 
+    public bool dead = false;
+
 
     public Color redTile;
     public Color blueTile;
@@ -87,6 +89,7 @@ public class TileController : MonoBehaviour {
     public void setCoords(Coords inCoords)
     {
         myCoords = inCoords;
+        if (HelperObjects.showCoords) myCoordDisplay.text = myCoords.ToString();
     }
 
     void SelectionAnimation()
@@ -193,7 +196,9 @@ public class TileController : MonoBehaviour {
         main.startColor = tempColor;
        tempVFX.GetComponentInChildren<ParticleSystem>().Play();
         Destroy(tempVFX, 3f);
+        dead = true;
         Destroy(gameObject);
+
     }
 
 }

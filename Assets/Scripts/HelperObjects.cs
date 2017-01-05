@@ -12,15 +12,18 @@ using UnityEngine;
 /// </summary>
 
 
+    //enums here
 public enum SWAPDIRECTION { UP, DOWN, LEFT, RIGHT};
 
 public enum TILETYPE { RED, BLUE, GREEN, YELLOW, BROWN, PURPLE, WHITE, NONE };
 
-
 public enum GAMESTATE { CANSELECT, CANTSELECT, TRYSWAP, RETURNSWAP, REPLACEMATCHES};
 
+//static helper methods
 
 public static class HelperObjects  {
+
+    public static bool showCoords = false;
 
     //get a random item of the given type
     public static T GetRandomEnum<T>()
@@ -31,6 +34,9 @@ public static class HelperObjects  {
     }
 
 }
+
+
+//data structures
 
 public struct Coords
 {
