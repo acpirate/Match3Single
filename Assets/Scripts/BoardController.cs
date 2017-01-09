@@ -14,9 +14,10 @@ public class BoardController : MonoBehaviour {
 
     public MatchController matchController;
     public GameObject SwapAnimPrefab;
+    public GameObject MoveAnimPrefab;
 
-    float tileReturnDelay = .3f;
-    float endSwapAnimTime;
+    //float tileReturnDelay = .3f;
+    float endAnimTime;
 
     Swap triedSwap;
     Swap nullSwap;
@@ -40,12 +41,17 @@ public class BoardController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	    if (GameController.gameState == GAMESTATE.TRYSWAP && Time.time > endSwapAnimTime)
+	    if (GameController.gameState == GAMESTATE.TRYSWAP && Time.time > endAnimTime)
         {
             //callSnap = true;
             CheckMatches();
         }	
-        if (GameController.gameState == GAMESTATE.RETURNSWAP && Time.time > endSwapAnimTime)
+        if (GameController.gameState == GAMESTATE.RETURNSWAP && Time.time > endAnimTime)
+        {
+            callSnap = true;
+            GameController.gameState = GAMESTATE.CANSELECT;
+        }
+        if (GameController.gameState == GAMESTATE.REPLACEMATCHES && Time.time > endAnimTime)
         {
             callSnap = true;
             GameController.gameState = GAMESTATE.CANSELECT;
@@ -64,6 +70,7 @@ public class BoardController : MonoBehaviour {
 
     void RemoveMatchedTiles()
     {
+        endAnimTime = Time.time + Constants.MOVEANIMATIONTIME + .01f;
         GameController.gameState = GAMESTATE.REPLACEMATCHES;
         foreach (Match match in GetBaseMatches())
         {
@@ -73,7 +80,7 @@ public class BoardController : MonoBehaviour {
             }
         }
         MoveTilesDown();
-        SnapPositionTiles();
+        //SnapPositionTiles();
         ReplaceRemovedTiles();
 
     }
@@ -103,6 +110,9 @@ public class BoardController : MonoBehaviour {
                         tempTile.GetComponent<TileController>().setCoords(new Coords(col, row - missingCounter));
                      //   Debug.Log("new coods for moved tile are " + col + "," + (row-missingCounter));
                         TileArray[col, row] = null;
+                        GameObject moveAnim = Instantiate(MoveAnimPrefab, tempTile.transform.position, Quaternion.identity);
+                        tempTile.transform.parent = moveAnim.transform;
+                        moveAnim.GetComponent<MoveAnimationScript>().SetMoveTarget(CalculateWorldPosition(col, row - missingCounter));
                     }
                 }
             }
@@ -117,20 +127,28 @@ public class BoardController : MonoBehaviour {
             {
                 if (TileArray[col, row]==null)
                 {
-                    SpawnTile(col, row);
+                    SpawnReplacedTile(col, row);
                 }
             }
         }
-        SnapPositionTiles();
-        GameController.gameState = GAMESTATE.CANSELECT;
+        //SnapPositionTiles();
+        //GameController.gameState = GAMESTATE.CANSELECT;
         triedSwap = nullSwap;
     }
 
-    void SpawnTile(int col, int row)
+    void SpawnReplacedTile(int col, int row)
     {
         GameObject tempTile = Instantiate(TilePrefab);
         tempTile.GetComponent<TileController>().setCoords(new Coords(col, row));
         TileArray[col, row] = tempTile;
+
+        Vector3 worldCoords = CalculateWorldPosition(col, row);
+        Vector3 tileSpawnLocation = new Vector3(worldCoords.x, Constants.REPLACETILESTARTHEIGHT, worldCoords.z);
+
+        tempTile.transform.position = tileSpawnLocation;
+        GameObject moveAnim = Instantiate(MoveAnimPrefab, tempTile.transform.position, Quaternion.identity);
+        moveAnim.GetComponent<MoveAnimationScript>().SetMoveTarget(worldCoords);
+        tempTile.transform.SetParent(moveAnim.transform);
     }
 
 
@@ -353,7 +371,7 @@ public class BoardController : MonoBehaviour {
 
     public void HandleSwap(GameObject tile1, GameObject tile2)
     {
-        Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
+        //Debug.Log("tile1 coords " + GetIndexOf(tile1).ToString() + " tile2 coords " + GetIndexOf(tile2).ToString());
 
         TileController tile1Controller = tile1.GetComponent<TileController>();
         TileController tile2Controller = tile2.GetComponent<TileController>();
@@ -402,7 +420,7 @@ public class BoardController : MonoBehaviour {
         //set the correct direction in the swap handler
         swapHandler.GetComponent<SwapAnimationScript>().myDirection = swapDirection;
 
-        endSwapAnimTime = Time.time + Constants.SWAPANIMATIONTIME;
+        endAnimTime = Time.time + Constants.SWAPANIMATIONTIME;
     }
 
 

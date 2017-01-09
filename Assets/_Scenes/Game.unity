@@ -343,6 +343,8 @@ MonoBehaviour:
   matchController: {fileID: 603135244}
   SwapAnimPrefab: {fileID: 1696748934468290, guid: 3637f688d28ed7d4195d6da78f37001f,
     type: 2}
+  MoveAnimPrefab: {fileID: 1256775751239200, guid: 13f8dbd87a23b06449b4f1455ed0b963,
+    type: 2}
 --- !u!1 &325756533
 GameObject:
   m_ObjectHideFlags: 0
