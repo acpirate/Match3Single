@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BoardController : MonoBehaviour {
 
@@ -28,13 +29,19 @@ public class BoardController : MonoBehaviour {
     bool callSnap = false;
 
     // Use this for initialization
-	void Start () {
+    void Start() {
         nullSwap = new Swap(new Coords(-9999, -9999), new Coords(-9999, -9999));
         triedSwap = nullSwap;
 
-        TileArray = new GameObject[Constants.BOARDSIZE,Constants.BOARDSIZE];
-        CreateBoard();
-        PreventInitialMatches();
+        TileArray = new GameObject[Constants.BOARDSIZE, Constants.BOARDSIZE];
+
+        int possibleMatches = 0;
+        while (possibleMatches<1)
+        { 
+            CreateBoard();
+            PreventInitialMatches();
+            possibleMatches = PossibleMatches().Count;
+        }
 
         selectedTile = null;
 	}
@@ -53,8 +60,8 @@ public class BoardController : MonoBehaviour {
         }
         if (GameController.gameState == GAMESTATE.REPLACEMATCHES && Time.time > endAnimTime)
         {
-            callSnap = true;
-            GameController.gameState = GAMESTATE.CANSELECT;
+            GameController.gameState = GAMESTATE.AFTERMATCH;
+            AfterMatchCheck();
         }
 	}
 
@@ -67,6 +74,88 @@ public class BoardController : MonoBehaviour {
         }
     }
 
+    //checks to see if new matches are created after new tiles are added and current
+    //tiles fall
+    void AfterMatchCheck()
+    {
+        if (GetBaseMatches().Count > 0)
+        {
+            triedSwap = nullSwap;
+            RemoveMatchedTiles();
+        }
+        else
+        {
+            NoPossibleMatchesCheck();
+            GameController.gameState = GAMESTATE.CANSELECT;
+            callSnap = true;
+        }
+    }
+
+    void NoPossibleMatchesCheck()
+    {
+        if (PossibleMatches().Count<1)
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+
+        //if there aren't any possible matches
+        //go to game over scene
+    }
+
+    public List<Swap> PossibleMatches()
+    {
+        List<Swap> foundMatches = new List<Swap>();
+
+        for (int colCounter = 0; colCounter < Constants.BOARDSIZE; colCounter++)
+        {
+            for (int rowCounter = 0; rowCounter < Constants.BOARDSIZE; rowCounter++)
+            {
+                //east swap check
+                if (colCounter < Constants.BOARDSIZE - 1)
+                {
+                    MakeSwap(TileArray[colCounter, rowCounter], TileArray[colCounter + 1, rowCounter]);
+                    if (GetBaseMatches().Count > 0)
+                    {
+                        Swap tempSwap;
+                        tempSwap.piece1Coords = new Coords(colCounter, rowCounter);
+                        tempSwap.piece2Coords = new Coords(colCounter + 1, rowCounter);
+                        foundMatches.Add(tempSwap);
+                    }
+                    MakeSwap(TileArray[colCounter, rowCounter], TileArray[colCounter + 1, rowCounter]);
+                }
+                //south swap
+                if (rowCounter < Constants.BOARDSIZE - 1)
+                {
+                    MakeSwap(TileArray[colCounter, rowCounter], TileArray[colCounter, rowCounter + 1]);
+                    if (GetBaseMatches().Count > 0)
+                    {
+                        Swap tempSwap;
+                        tempSwap.piece1Coords = new Coords(colCounter, rowCounter);
+                        tempSwap.piece2Coords = new Coords(colCounter, rowCounter + 1);
+                        foundMatches.Add(tempSwap);
+                    }
+                    MakeSwap(TileArray[colCounter, rowCounter], TileArray[colCounter, rowCounter + 1]);
+                }
+            }
+        }
+
+
+        return foundMatches;
+    }
+
+    public void MakeSwap(GameObject piece1, GameObject piece2)
+    {
+        Coords piece1Coords = GetIndexOf(piece1);
+        Coords piece2Coords = GetIndexOf(piece2);
+
+        GameObject tempPiece = piece1;
+        TileArray[piece1Coords.x, piece1Coords.y] = piece2;
+        TileArray[piece2Coords.x, piece2Coords.y] = tempPiece;
+
+        //SnapToWorldPosition(piece1Coords.x,piece1Coords.y);
+        //SnapToWorldPosition(piece2Coords.x,piece2Coords.y);
+
+    }
 
     void RemoveMatchedTiles()
     {

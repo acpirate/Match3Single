@@ -86,6 +86,8 @@ public class TerminalController : MonoBehaviour {
         helpMessage += "SETTILE | ";
         OnCommand += ResetBoard;
         helpMessage += "RESETBOARD | ";
+        OnCommand += ListPossibleMatches;
+        helpMessage += "LISTPOSSIBLEMATCHES |";
     //    OnCommand += Command1;
     //    OnCommand += Command2;
     //    OnCommand("this is the command string");
@@ -98,6 +100,7 @@ public class TerminalController : MonoBehaviour {
         OnCommand -= SetTile;
         OnCommand -= ResetBoard;
         OnCommand -= ListBaseMatches;
+        OnCommand -= ListPossibleMatches;
     //    OnCommand -= Command1;
     //    OnCommand -= Command2;
     }
@@ -236,6 +239,25 @@ public class TerminalController : MonoBehaviour {
         }
        
 
+    }
+
+    void ListPossibleMatches(string[] splitCommand)
+    {
+        if (splitCommand[0].ToUpper() != "LISTPOSSIBLEMATCHES") return;
+        commandHandled = true;
+
+        List<Swap> possibleMatches = boardController.PossibleMatches();
+
+        if (possibleMatches.Count <1 )
+        {
+            AddLineToTerminalDisplay(" - NO POSSIBLE MATCHES");
+            return;
+        }
+
+        foreach (Swap swap in boardController.PossibleMatches())
+        {
+            AddLineToTerminalDisplay("Possible Matche:" + swap.ToString());
+        }
     }
 
 

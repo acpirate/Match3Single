@@ -9,5 +9,9 @@ public class GoToScene : MonoBehaviour {
     {
         SceneManager.LoadScene("Game");
     }
+    public void GoToTitle()
+    {
+        SceneManager.LoadScene("Title");
+    }
 
 }
