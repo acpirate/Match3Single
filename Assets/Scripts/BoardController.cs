@@ -16,6 +16,7 @@ public class BoardController : MonoBehaviour {
     public MatchController matchController;
     public GameObject SwapAnimPrefab;
     public GameObject MoveAnimPrefab;
+    public GameController gameController;
 
     //float tileReturnDelay = .3f;
     float endAnimTime;
@@ -63,6 +64,10 @@ public class BoardController : MonoBehaviour {
             GameController.gameState = GAMESTATE.AFTERMATCH;
             AfterMatchCheck();
         }
+        if (GameController.gameState == GAMESTATE.MATCHCASCADEDELAY && Time.time > endAnimTime)
+        {
+            RemoveMatchedTiles();
+        }
 	}
 
     void LateUpdate()
@@ -81,7 +86,9 @@ public class BoardController : MonoBehaviour {
         if (GetBaseMatches().Count > 0)
         {
             triedSwap = nullSwap;
-            RemoveMatchedTiles();
+            GameController.gameState = GAMESTATE.MATCHCASCADEDELAY;
+            endAnimTime = Time.time + Constants.MATCHCASCADEDELAY;
+            //RemoveMatchedTiles();
         }
         else
         {
@@ -95,7 +102,7 @@ public class BoardController : MonoBehaviour {
     {
         if (PossibleMatches().Count<1)
         {
-            SceneManager.LoadScene("GameOver");
+            gameController.EndGame();
         }
 
         //if there aren't any possible matches
@@ -163,6 +170,9 @@ public class BoardController : MonoBehaviour {
         GameController.gameState = GAMESTATE.REPLACEMATCHES;
         foreach (Match match in GetBaseMatches())
         {
+            //score the match
+            gameController.ScoreMatch(match);
+            //remove the match
             foreach(Coords coord in match.matchCoords)
             {
                 TileArray[coord.x, coord.y].GetComponent<TileController>().RemoveForMatch();

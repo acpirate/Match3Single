@@ -14,6 +14,7 @@ public class TerminalController : MonoBehaviour {
     public Text terminalDisplay;
     public InputField terminalInput;
     public BoardController boardController;
+    public GameController gameController;
 
     string helpMessage = "";
     //used to display help message in lateupdate if the command isn't handled
@@ -78,19 +79,24 @@ public class TerminalController : MonoBehaviour {
 
     public void OnEnable()
     {
+        OnCommand += AddScore;
+        helpMessage += "ADDSCORE |";
+        OnCommand += EndGame;
+        helpMessage += "ENDGAME |";
         OnCommand += ListBaseMatches;
         helpMessage += "LISTBASEMATCHES |";
-        OnCommand += ToggleCoords;
-        helpMessage += "TOGGLECOORDS | ";
-        OnCommand += SetTile;
-        helpMessage += "SETTILE | ";
-        OnCommand += ResetBoard;
-        helpMessage += "RESETBOARD | ";
         OnCommand += ListPossibleMatches;
         helpMessage += "LISTPOSSIBLEMATCHES |";
-    //    OnCommand += Command1;
-    //    OnCommand += Command2;
-    //    OnCommand("this is the command string");
+        OnCommand += ResetBoard;
+        helpMessage += "RESETBOARD | ";
+        OnCommand += SetTile;
+        helpMessage += "SETTILE | ";
+        OnCommand += ToggleCoords;
+        helpMessage += "TOGGLECOORDS | ";
+
+        //    OnCommand += Command1;
+        //    OnCommand += Command2;
+        //    OnCommand("this is the command string");
     }
 
     public void OnDisable()
@@ -101,6 +107,8 @@ public class TerminalController : MonoBehaviour {
         OnCommand -= ResetBoard;
         OnCommand -= ListBaseMatches;
         OnCommand -= ListPossibleMatches;
+        OnCommand -= AddScore;
+        OnCommand -= EndGame;
     //    OnCommand -= Command1;
     //    OnCommand -= Command2;
     }
@@ -153,7 +161,7 @@ public class TerminalController : MonoBehaviour {
         bool validParams = true;
 
         //usage string
-        string usage = "SETTILE [0-7] [0-7] [ BLUE | BROWN | GREEN | PURPLE | RED | WHITE | YELLOW]";
+        string usage = "USAGE: SETTILE [0-7] [0-7] [ BLUE | BROWN | GREEN | PURPLE | RED | WHITE | YELLOW]";
 
         //validate number of params
         if (splitCommand.Length != 4)
@@ -241,6 +249,7 @@ public class TerminalController : MonoBehaviour {
 
     }
 
+    //list all possible matches
     void ListPossibleMatches(string[] splitCommand)
     {
         if (splitCommand[0].ToUpper() != "LISTPOSSIBLEMATCHES") return;
@@ -256,8 +265,52 @@ public class TerminalController : MonoBehaviour {
 
         foreach (Swap swap in boardController.PossibleMatches())
         {
-            AddLineToTerminalDisplay("Possible Matche:" + swap.ToString());
+            AddLineToTerminalDisplay("Possible Matches:" + swap.ToString());
         }
+    }
+
+    //Add to the score
+    void AddScore(string[] splitCommand)
+    {
+        if(splitCommand[0].ToUpper() != "ADDSCORE") return;
+        commandHandled = true;
+
+        bool validParams = true;
+
+        //usage string
+        string usage = "USAGE: ADDSCORE [INT]";
+
+        //validate number of params
+        if (splitCommand.Length != 2)
+        {
+            validParams = false;
+        }
+   
+        //validate number params value
+        int paramValue = -9999;
+        if (validParams && !(int.TryParse(splitCommand[1], out paramValue)))
+        {
+            validParams = false;
+        }
+
+        if (!validParams)
+        {
+            AddLineToTerminalDisplay(" - " + usage);
+            return;
+        }
+
+        AddLineToTerminalDisplay(" - Adding " + paramValue + " to score");
+        gameController.AddScore(paramValue);
+
+    }
+
+    void EndGame(string[] splitCommand)
+    {
+        if (splitCommand[0].ToUpper() != "ENDGAME") return;
+        commandHandled = true;
+
+        ToggleConsole();
+        gameController.EndGame();
     }
 
 

@@ -13,5 +13,9 @@ public class GoToScene : MonoBehaviour {
     {
         SceneManager.LoadScene("Title");
     }
+    public void GoToSelectScreen()
+    {
+        SceneManager.LoadScene("ModeSelect");
+    }
 
 }
