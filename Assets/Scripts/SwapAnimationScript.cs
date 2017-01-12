@@ -6,7 +6,6 @@ public class SwapAnimationScript : MonoBehaviour {
 
     float timer;
     public SWAPDIRECTION myDirection { get; set; }
-    float startRotation = 0;
     float endRotation = 180;
 
 

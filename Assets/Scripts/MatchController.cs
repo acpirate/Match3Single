@@ -5,8 +5,13 @@ using UnityEngine;
 public class MatchController : MonoBehaviour
 {
 
-    public BoardController boardController;
+    public static MatchController Instance;
 
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     //return a list of all of the straight/line matches currently showing
     public List<Match> getBaseMatches()
@@ -25,7 +30,7 @@ public class MatchController : MonoBehaviour
             Match tempMatch = new Match();
             for (int rowCounter = 0; rowCounter < Constants.BOARDSIZE; rowCounter++)
             {
-                TileController tempTileController = boardController.GetTileAtCoords(new Coords(colCounter, rowCounter)).GetComponent<TileController>();
+                TileController tempTileController = BoardController.Instance.GetTileAtCoords(new Coords(colCounter, rowCounter)).GetComponent<TileController>();
                 if (tempTileController.myType == baseType)
                 {
                     runCount++;
@@ -62,7 +67,7 @@ public class MatchController : MonoBehaviour
             Match tempMatch = new Match();
             for (int colCounter = 0; colCounter < Constants.BOARDSIZE; colCounter++)
             {
-                TileController tempTileController = boardController.GetTileAtCoords(new Coords(colCounter, rowCounter)).GetComponent<TileController>();
+                TileController tempTileController = BoardController.Instance.GetTileAtCoords(new Coords(colCounter, rowCounter)).GetComponent<TileController>();
                 if (tempTileController.myType == baseType)
                 {
                     runCount++;

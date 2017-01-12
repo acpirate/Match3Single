@@ -30,14 +30,11 @@ public class TileController : MonoBehaviour {
     Material myMaterial;
     Coords myCoords;
 
-    BoardController boardController;
-
     void Awake()
     {
         myCoordDisplay = GetComponentInChildren<Text>();
         myMaterial = GetComponent<MeshRenderer>().material;
 
-        boardController = GameObject.FindGameObjectWithTag("Board").GetComponent<BoardController>();
 
         Randomize();
     }
@@ -55,10 +52,10 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseDown()
     {
-        if (GameController.gameState == GAMESTATE.CANSELECT)
+        if (GameController.Instance.gameState == GAMESTATE.CANSELECT)
         {
             ToggleSelected();
-            boardController.TileSelected(gameObject);
+            BoardController.Instance.TileSelected(gameObject);
         }
     }
 

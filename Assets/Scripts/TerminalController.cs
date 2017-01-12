@@ -13,8 +13,7 @@ public class TerminalController : MonoBehaviour {
 
     public Text terminalDisplay;
     public InputField terminalInput;
-    public BoardController boardController;
-    public GameController gameController;
+
 
     string helpMessage = "";
     //used to display help message in lateupdate if the command isn't handled
@@ -141,7 +140,7 @@ public class TerminalController : MonoBehaviour {
         if (splitCommand[0].ToUpper() != "TOGGLECOORDS") return;
         commandHandled = true;
 
-        boardController.ToggleCoords();
+        BoardController.Instance.ToggleCoords();
 
         AddLineToTerminalDisplay(" - toggling the coordinate display");
 
@@ -214,7 +213,7 @@ public class TerminalController : MonoBehaviour {
         }
 
         AddLineToTerminalDisplay(" - Setting tile at " + splitCommand[1] + "," + splitCommand[2] + " to " + splitCommand[3].ToUpper());
-        boardController.SetTileTypeFromString(int.Parse(splitCommand[1]), int.Parse(splitCommand[2]), splitCommand[3].ToUpper());
+        BoardController.Instance.SetTileTypeFromString(int.Parse(splitCommand[1]), int.Parse(splitCommand[2]), splitCommand[3].ToUpper());
 
 
     }
@@ -223,7 +222,7 @@ public class TerminalController : MonoBehaviour {
     {
         if (splitCommand[0].ToUpper() != "RESETBOARD") return;
         commandHandled = true;
-        boardController.CreateBoard();
+        BoardController.Instance.CreateBoard();
         AddLineToTerminalDisplay(" - RESETTING THE BOARD");
 
     }
@@ -234,14 +233,14 @@ public class TerminalController : MonoBehaviour {
         if (splitCommand[0].ToUpper() != "LISTBASEMATCHES") return;
         commandHandled = true;
 
-        List<Match> matches = boardController.GetBaseMatches();
+        List<Match> matches = GameController.Instance.GetBaseMatches();
 
         if (matches.Count < 1)
         {
             AddLineToTerminalDisplay(" - NO MATCHES");
             return;
         }
-        foreach (Match match in boardController.GetBaseMatches())
+        foreach (Match match in matches)
         {
             AddLineToTerminalDisplay(match.ToString());
         }
@@ -255,7 +254,7 @@ public class TerminalController : MonoBehaviour {
         if (splitCommand[0].ToUpper() != "LISTPOSSIBLEMATCHES") return;
         commandHandled = true;
 
-        List<Swap> possibleMatches = boardController.PossibleMatches();
+        List<Swap> possibleMatches = GameController.Instance.PossibleMatches();
 
         if (possibleMatches.Count <1 )
         {
@@ -263,7 +262,7 @@ public class TerminalController : MonoBehaviour {
             return;
         }
 
-        foreach (Swap swap in boardController.PossibleMatches())
+        foreach (Swap swap in possibleMatches)
         {
             AddLineToTerminalDisplay("Possible Matches:" + swap.ToString());
         }
@@ -300,7 +299,7 @@ public class TerminalController : MonoBehaviour {
         }
 
         AddLineToTerminalDisplay(" - Adding " + paramValue + " to score");
-        gameController.AddScore(paramValue);
+        GameController.Instance.AddScore(paramValue);
 
     }
 
@@ -310,7 +309,7 @@ public class TerminalController : MonoBehaviour {
         commandHandled = true;
 
         ToggleConsole();
-        gameController.EndGame();
+        GameController.Instance.EndGame();
     }
 
 
