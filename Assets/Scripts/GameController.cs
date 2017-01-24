@@ -12,7 +12,6 @@ public class GameController : MonoBehaviour {
 
     public int score = 0;
 
-    public Text scoreDisplay;
 
     public bool dialogConfirm = false;
     public bool dialogDeny = false;
@@ -50,7 +49,7 @@ public class GameController : MonoBehaviour {
     public void AddScore(int scoreToAdd)
     {
         score += scoreToAdd;
-        scoreDisplay.text = "Score: " + score.ToString();
+        UIController.Instance.ShowScore(score);
     }
 
     //calculate the score of a match
@@ -178,19 +177,21 @@ public class GameController : MonoBehaviour {
         }
         if (GameController.Instance.gameState == GAMESTATE.QUITCONFIRM)
         {
-
+            QuitDialogCheck();
         }
     }
 
-    void QuitDialogState()
+    //action when quit dialog box is active
+    void QuitDialogCheck()
     {
-        if (GameController.Instance.dialogConfirm)
+        if (dialogConfirm) EndGame();
+        if (dialogDeny)
         {
-            GameController.Instance.EndGame();
+            dialogDeny = false;
+            UIController.Instance.QuitDialogDeny();
         }
-
     }
-
+    
 
     //checks to see if new matches are created after new tiles are added and current
     //tiles fall
