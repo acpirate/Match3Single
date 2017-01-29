@@ -72,7 +72,9 @@ public class GameController : MonoBehaviour {
     //end the game
     public void EndGame()
     {
+        HandleHighScore();
         SceneManager.LoadScene("GameOver");
+
     }
 
     //prevent the board from having any matches
@@ -235,5 +237,28 @@ public class GameController : MonoBehaviour {
         {
             BoardController.Instance.RemoveMatchedTiles();
         }
+    }
+
+    //HighScore
+
+    void HandleHighScore()
+    {
+        if (!PlayerPrefs.HasKey(Constants.MODE1HIGHSCOREPREF))
+        {
+            SetHighScore(score);
+        }
+        else
+        {
+            if (score > PlayerPrefs.GetInt(Constants.MODE1HIGHSCOREPREF))
+            {
+                SetHighScore(score);
+            }       
+
+        }
+    }
+
+    void SetHighScore(int scoreToSet)
+    {
+        PlayerPrefs.SetInt(Constants.MODE1HIGHSCOREPREF, scoreToSet);
     }
 }

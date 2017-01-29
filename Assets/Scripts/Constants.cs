@@ -9,5 +9,6 @@ public class Constants  {
     public static readonly float MOVEANIMATIONTIME = .8f;
     public static readonly float REPLACETILESTARTHEIGHT = 10;
     public static readonly float MATCHCASCADEDELAY = .2f;
+    public static readonly string MODE1HIGHSCOREPREF = "mode1highscore";
 
 }
