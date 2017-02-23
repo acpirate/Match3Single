@@ -2095,6 +2095,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5cda023a4b25404ab8a9d59db1b8683, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ScoreVFXPrefab: {fileID: 1037476615177528, guid: 3ed10ab5ef4ee4142be6884aaadd8b21,
+    type: 2}
   gameState: 0
   score: 0
   dialogConfirm: 0

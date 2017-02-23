@@ -337,8 +337,7 @@ public class BoardController : MonoBehaviour {
         {
             TileController selectedTileController = selectedTile.GetComponent<TileController>();
 
-            Debug.Log(selectedTileController.getCoords().ToString() + " " + clickedTileController.getCoords().ToString());
-
+     
             //test to see if selected tile was clicked
             if (selectedTileController.getCoords().Equals(clickedTileController.getCoords()))
             {
@@ -438,5 +437,19 @@ public class BoardController : MonoBehaviour {
 
         //Debug.Log(matchCoords.x + " ," + matchCoords.y);
         TileArray[col, row].GetComponent<TileController>().Randomize();
+    }
+
+    public Vector3 CalculateMatchCenter(Match inMatch)
+    {
+        Vector3 matchCenter = Vector3.zero;
+
+        foreach (Coords coords in inMatch.matchCoords)
+        {
+            matchCenter += CalculateWorldPosition(coords.x, coords.y);
+        }
+
+        matchCenter = matchCenter / inMatch.matchCoords.Count;
+
+        return matchCenter;
     }
 }

@@ -206,14 +206,22 @@ public class TileController : MonoBehaviour {
 
 
         var main = vfxSystem.main;
-        Color tempColor = myMaterial.GetColor("_Color");
-        tempColor = new Color(tempColor.r, tempColor.g, tempColor.b, 1);
+        Color tempColor = GetColor();
         main.startColor = tempColor;
        tempVFX.GetComponentInChildren<ParticleSystem>().Play();
         Destroy(tempVFX, 3f);
         dead = true;
         Destroy(gameObject);
 
+    }
+
+
+
+    public Color GetColor()
+    {
+        Color tempColor = myMaterial.GetColor("_Color");
+        tempColor = new Color(tempColor.r, tempColor.g, tempColor.b, 1);
+        return tempColor;
     }
 
 }

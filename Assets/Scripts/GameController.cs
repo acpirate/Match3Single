@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
+    public GameObject ScoreVFXPrefab;
+
     public static GameController Instance;
 
     public GAMESTATE gameState = GAMESTATE.CANSELECT;
@@ -55,19 +57,37 @@ public class GameController : MonoBehaviour {
     //calculate the score of a match
     public void ScoreMatch(Match matchToScore)
     {
+        //ScoreVFX(matchToScore);
+        int calculatedScore = 0;
+
         if (matchToScore.matchCoords.Count==3)
         {
-            AddScore(match3Score *3);
+            calculatedScore = match3Score * 3;
         }
         if (matchToScore.matchCoords.Count==4)
         {
-            AddScore(match4Score * 4);
+            calculatedScore = match4Score * 4;
         }
         if (matchToScore.matchCoords.Count > 4)
         {
-            AddScore(matchToScore.matchCoords.Count * matchBlobScore);
+            calculatedScore = matchToScore.matchCoords.Count * matchBlobScore;
         }
+        ScoreVFX(matchToScore, calculatedScore.ToString());
+        AddScore(calculatedScore);
     }
+
+    //generate animated score
+    void ScoreVFX(Match inMatch, string inScore)
+    {
+        Vector3 scoreVFXSpawnLocation = BoardController.Instance.CalculateMatchCenter(inMatch);
+
+        GameObject scoreVFX = Instantiate(ScoreVFXPrefab, scoreVFXSpawnLocation, Quaternion.identity);
+
+        Color scoreColor = BoardController.Instance.GetTileAtCoords(inMatch.matchCoords[0]).GetComponent<TileController>().GetColor();
+
+        scoreVFX.GetComponent<ScoreVFXController>().Initialize(inScore, scoreColor);
+    }
+
 
     //end the game
     public void EndGame()
