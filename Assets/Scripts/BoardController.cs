@@ -324,27 +324,44 @@ public class BoardController : MonoBehaviour {
     //if the a neighbor tile is already selected a swap will be attempted
     public void TileSelected(GameObject clickedTile)
     {
+        TileController clickedTileController = clickedTile.GetComponent<TileController>();
+
         //no tile selected
         if (selectedTile == null) {
             selectedTile = clickedTile;
+            clickedTileController.SetSelected(true);
+            return;
         }
         //a tile is selected
         else
         {
+            TileController selectedTileController = selectedTile.GetComponent<TileController>();
+
+            Debug.Log(selectedTileController.getCoords().ToString() + " " + clickedTileController.getCoords().ToString());
+
+            //test to see if selected tile was clicked
+            if (selectedTileController.getCoords().Equals(clickedTileController.getCoords()))
+            {
+                selectedTile = null;
+                clickedTileController.SetSelected(false);
+                return;
+            }
             //clicked tile is next to currently selected tile
             if (GetNeighbors(clickedTile).Contains(selectedTile))
             {
                 //fire the handle swap method
                 HandleSwap(selectedTile, clickedTile);
                 //unselect the tiles
-                selectedTile.GetComponent<TileController>().ToggleSelected();
-                clickedTile.GetComponent<TileController>().ToggleSelected();
+                selectedTileController.SetSelected(false);
+                clickedTileController.SetSelected(true);
+                clickedTileController.SetSelected(false);
                 selectedTile = null;
             }
             //clicked tile is not next to currently selected tile
             else
             {
-                selectedTile.GetComponent<TileController>().ToggleSelected();
+                selectedTileController.SetSelected(false);
+                clickedTileController.SetSelected(true);
                 selectedTile = clickedTile;
             }
         }

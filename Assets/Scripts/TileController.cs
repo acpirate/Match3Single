@@ -42,7 +42,7 @@ public class TileController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+        originalPosition = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -54,14 +54,27 @@ public class TileController : MonoBehaviour {
     {
         if (GameController.Instance.gameState == GAMESTATE.CANSELECT)
         {
-            ToggleSelected();
             BoardController.Instance.TileSelected(gameObject);
         }
     }
-
+    /*
     public void ToggleSelected()
     {
         if (!(isSelected))
+        {
+            isSelected = true;
+            originalPosition = transform.position;
+        }
+        else
+        {
+            isSelected = false;
+            transform.position = originalPosition;
+        }
+    }*/
+
+    public void SetSelected(bool inSelected)
+    {
+        if (inSelected)
         {
             isSelected = true;
             originalPosition = transform.position;
@@ -87,6 +100,11 @@ public class TileController : MonoBehaviour {
     {
         myCoords = inCoords;
         if (HelperObjects.showCoords) myCoordDisplay.text = myCoords.ToString();
+    }
+
+    public Coords getCoords()
+    {
+        return myCoords;
     }
 
     void SelectionAnimation()
