@@ -76,6 +76,7 @@ public class TerminalController : MonoBehaviour {
         terminalDisplay.text += "\n" + stringToAdd;
     }
 
+    //add commands to the oncommand event, and add the command syntax to help
     public void OnEnable()
     {
         OnCommand += AddScore;
@@ -92,12 +93,11 @@ public class TerminalController : MonoBehaviour {
         helpMessage += "SETTILE | ";
         OnCommand += ToggleCoords;
         helpMessage += "TOGGLECOORDS | ";
-
-        //    OnCommand += Command1;
-        //    OnCommand += Command2;
-        //    OnCommand("this is the command string");
+        OnCommand += ListCalculatedMatches;
+        helpMessage += "LISTCALCULATEDMATCHES";
     }
 
+    //remove command from the oncommand event and erase the help to avoid memory leaks
     public void OnDisable()
     {
         helpMessage = "";
@@ -108,8 +108,7 @@ public class TerminalController : MonoBehaviour {
         OnCommand -= ListPossibleMatches;
         OnCommand -= AddScore;
         OnCommand -= EndGame;
-    //    OnCommand -= Command1;
-    //    OnCommand -= Command2;
+        OnCommand -= ListCalculatedMatches;
     }
 
     public void DisplayHelp(string commandString)
@@ -312,6 +311,24 @@ public class TerminalController : MonoBehaviour {
         GameController.Instance.EndGame();
     }
 
+    void ListCalculatedMatches( string[] splitCommand)
+    {
+        if (splitCommand[0].ToUpper() != "LISTCALCULATEDMATCHES") return;
+        commandHandled = true;
+
+        List<Match> matches = GameController.Instance.GetMatches();
+
+        if (matches.Count < 1)
+        {
+            AddLineToTerminalDisplay(" - NO MATCHES");
+            return;
+        }
+        foreach (Match match in matches)
+        {
+            AddLineToTerminalDisplay(match.ToString());
+        }
+
+    }
 
 
 }

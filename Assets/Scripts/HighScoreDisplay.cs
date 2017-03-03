@@ -17,6 +17,9 @@ public class HighScoreDisplay : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (PlayerPrefs.HasKey(Constants.MODE1HIGHSCOREPREF))
+        {
+            highScoreText.text = "High Score:" + PlayerPrefs.GetInt(Constants.MODE1HIGHSCOREPREF).ToString();
+        }
+    }
 }

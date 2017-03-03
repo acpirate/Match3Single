@@ -11,5 +11,6 @@ public class Constants  {
     public static readonly float MATCHCASCADEDELAY = .2f;
     public static readonly string MODE1HIGHSCOREPREF = "mode1highscore";
     public static readonly float SCOREMOVEDELAY = .2f;
+    public static readonly float CHAINMATCHMULTIPLIER = .25f;
 
 }

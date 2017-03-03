@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour {
 
     public GameObject dialogPanel;
     public Text scoreDisplay;
+    public Text chainDisplay;
 
     void Awake()
     {
@@ -22,8 +23,13 @@ public class UIController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        UpdateChainDisplay();
 	}
+
+    public void UpdateChainDisplay()
+    {
+        chainDisplay.text = "Chain: " + GameController.Instance.chain.ToString();
+    }
 
     public void QuitButtonClicked()
     {
@@ -45,4 +51,6 @@ public class UIController : MonoBehaviour {
     {
         scoreDisplay.text = "Score: " + scoreToShow.ToString();
     }
+
+
 }

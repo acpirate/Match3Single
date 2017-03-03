@@ -24,6 +24,8 @@ public class GameController : MonoBehaviour {
 
     public float endAnimTime;
 
+    public int chain = 0;
+
     void Awake()
     {
         //fake singleton pattern
@@ -72,6 +74,10 @@ public class GameController : MonoBehaviour {
         {
             calculatedScore = matchToScore.matchCoords.Count * matchBlobScore;
         }
+
+        //calculate chain multipler
+        calculatedScore = Mathf.RoundToInt(calculatedScore * (1 + Constants.CHAINMATCHMULTIPLIER * chain));
+
         ScoreVFX(matchToScore, calculatedScore.ToString());
         AddScore(calculatedScore);
     }
@@ -124,6 +130,14 @@ public class GameController : MonoBehaviour {
         //Debug.Log("loops until no matches " + initialMatchCounter);
     }
 
+
+    public List<Match> GetMatches()
+    {
+        List<Match> baseMatches = GetBaseMatches();
+        List<Match> calculatedMatches = MatchController.Instance.DesignateBlobMatches(baseMatches);
+
+        return calculatedMatches;
+    }
 
     //returns the matches of 3+ in a straight line
     public List<Match> GetBaseMatches()
@@ -224,10 +238,14 @@ public class GameController : MonoBehaviour {
             BoardController.Instance.triedSwap = BoardController.Instance.nullSwap;
             GameController.Instance.gameState = GAMESTATE.MATCHCASCADEDELAY;
             endAnimTime = Time.time + Constants.MATCHCASCADEDELAY;
+            //after the match increase the chain count;
+            chain++;
             //RemoveMatchedTiles();
         }
         else
         {
+            //set chain count to zero if there are no possible matches after a match
+            chain = 0;
             NoPossibleMatchesCheck();
             GameController.Instance.gameState = GAMESTATE.CANSELECT;
             BoardController.Instance.callSnap = true;

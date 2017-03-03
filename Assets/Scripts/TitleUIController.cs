@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GoToScene : MonoBehaviour {
+public class TitleUIController : MonoBehaviour {
 
     public void GoToGame()
     {
@@ -18,4 +18,8 @@ public class GoToScene : MonoBehaviour {
         SceneManager.LoadScene("ModeSelect");
     }
 
+    public void QuitTitleClick()
+    {
+        Application.Quit();
+    }
 }

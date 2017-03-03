@@ -93,7 +93,7 @@ public class BoardController : MonoBehaviour {
     {
         GameController.Instance.endAnimTime = Time.time + Constants.MOVEANIMATIONTIME + .01f;
         GameController.Instance.gameState = GAMESTATE.REPLACEMATCHES;
-        foreach (Match match in GameController.Instance.GetBaseMatches())
+        foreach (Match match in GameController.Instance.GetMatches())
         {
             //score the match
             GameController.Instance.ScoreMatch(match);
