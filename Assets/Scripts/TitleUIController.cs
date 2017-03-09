@@ -22,4 +22,9 @@ public class TitleUIController : MonoBehaviour {
     {
         Application.Quit();
     }
+
+    public void GoToCredits()
+    {
+        SceneManager.LoadScene("Credits");
+    }
 }
