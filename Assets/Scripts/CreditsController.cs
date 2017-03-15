@@ -11,7 +11,7 @@ public class CreditsController : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        MusicController.instance.PlayCreditsMusic();
+       // MusicController.instance.PlayCreditsMusic();
         //  Debug.Log(((TextAsset)Resources.Load("Credits")).text);
         creditsTextDisplay.text = ((TextAsset)Resources.Load("TextFiles/Credits")).text;
     }
