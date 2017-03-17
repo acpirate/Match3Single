@@ -99,7 +99,7 @@ public class GameController : MonoBehaviour {
     public void EndGame()
     {
         HandleHighScore();
-        SceneManager.LoadScene("GameOver");
+        SceneMasterController.instance.GoToGameOverScreen();
 
     }
 
@@ -237,7 +237,7 @@ public class GameController : MonoBehaviour {
         {
             BoardController.Instance.triedSwap = BoardController.Instance.nullSwap;
             GameController.Instance.gameState = GAMESTATE.MATCHCASCADEDELAY;
-            endAnimTime = Time.time + Constants.MATCHCASCADEDELAY;
+            endAnimTime = Time.time + Constants.MATCHCHAINDELAY;
             //after the match increase the chain count;
             chain++;
             //RemoveMatchedTiles();

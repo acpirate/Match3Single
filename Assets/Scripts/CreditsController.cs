@@ -16,9 +16,4 @@ public class CreditsController : MonoBehaviour {
         creditsTextDisplay.text = ((TextAsset)Resources.Load("TextFiles/Credits")).text;
     }
 	
-
-    public void BackToGameSelect()
-    {
-        SceneManager.LoadScene("ModeSelect");
-    }
 }
