@@ -13,6 +13,7 @@ public class MusicController : MonoBehaviour {
     public AudioClip creditsMusic;
     public AudioClip gameoverMusic;
 
+    Animator myAnimator;
     AudioSource mySource;
 
     void Awake()
@@ -25,6 +26,7 @@ public class MusicController : MonoBehaviour {
         else Destroy(gameObject);
 
         mySource = GetComponentInChildren<AudioSource>();
+        myAnimator = GetComponent<Animator>();
     }
 
     void OnEnable()
@@ -85,6 +87,16 @@ public class MusicController : MonoBehaviour {
 
         mySource.clip = creditsMusic;
         mySource.Play();
+    }
+
+    public void MusicFadeOut()
+    {
+        myAnimator.SetTrigger("MusicFadeOut");
+    }
+
+    public void MusicFadeIn()
+    {
+        myAnimator.SetTrigger("MusicFadeIn");
     }
 
     void SceneChange(Scene scene1, Scene scene2)

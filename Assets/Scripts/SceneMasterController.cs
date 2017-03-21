@@ -49,14 +49,19 @@ public class SceneMasterController : MonoBehaviour {
 
     void SetupSceneSwitch(string nameOfScene)
     {
+
         faderAnimator.SetTrigger("FadeOutTrigger");
+        Debug.Log("called fade out trigger");
+        MusicController.instance.MusicFadeOut();
         //Debug.Log("in scene switch");
         sceneTarget = nameOfScene;
     }
 
     public void DoSceneChange()
     {
+        MusicController.instance.MusicFadeIn();
         SceneManager.LoadScene(sceneTarget);
+        
     }
 
 

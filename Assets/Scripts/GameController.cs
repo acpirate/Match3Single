@@ -42,6 +42,7 @@ public class GameController : MonoBehaviour {
             PreventInitialMatches();
             possibleMatches = PossibleMatches().Count;
         }
+
     }
 	
 	// Update is called once per frame
@@ -99,6 +100,7 @@ public class GameController : MonoBehaviour {
     public void EndGame()
     {
         HandleHighScore();
+        gameState = GAMESTATE.CANTSELECT;
         SceneMasterController.instance.GoToGameOverScreen();
 
     }
