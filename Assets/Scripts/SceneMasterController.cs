@@ -11,11 +11,16 @@ public class SceneMasterController : MonoBehaviour {
 
     public static SceneMasterController instance;
 
-
+    SoundMasterController soundMaster;
 
     void Awake()
     {
             instance = this;
+    }
+
+    void Start()
+    {
+        soundMaster = GameObject.FindGameObjectWithTag("SoundMaster").GetComponent<SoundMasterController>();
     }
 
     public void GoToGame()
@@ -51,7 +56,7 @@ public class SceneMasterController : MonoBehaviour {
     {
 
         faderAnimator.SetTrigger("FadeOutTrigger");
-        Debug.Log("called fade out trigger");
+        //Debug.Log("called fade out trigger");
         MusicController.instance.MusicFadeOut();
         //Debug.Log("in scene switch");
         sceneTarget = nameOfScene;
@@ -62,6 +67,11 @@ public class SceneMasterController : MonoBehaviour {
         MusicController.instance.MusicFadeIn();
         SceneManager.LoadScene(sceneTarget);
         
+    }
+
+    public void PlayClick()
+    {
+        soundMaster.PlayClick();
     }
 
 

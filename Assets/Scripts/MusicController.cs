@@ -2,19 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 public class MusicController : MonoBehaviour {
 
     public static MusicController instance;
+
 
     public AudioClip titleMusic;
     public AudioClip selectMusic;
     public AudioClip gameplayMusic;
     public AudioClip creditsMusic;
     public AudioClip gameoverMusic;
+    public AudioMixer musicMixer;
+    public AudioMixerSnapshot musicOutSnap;
+    public AudioMixerSnapshot musicInSnap;
+
 
     Animator myAnimator;
     AudioSource mySource;
+
+
 
     void Awake()
     {
@@ -41,7 +49,7 @@ public class MusicController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+        MusicFadeIn();
 	}
 	
 	// Update is called once per frame
@@ -91,12 +99,14 @@ public class MusicController : MonoBehaviour {
 
     public void MusicFadeOut()
     {
-        myAnimator.SetTrigger("MusicFadeOut");
+
+        musicOutSnap.TransitionTo(.3f);
     }
 
     public void MusicFadeIn()
     {
-        myAnimator.SetTrigger("MusicFadeIn");
+        musicInSnap.TransitionTo(3);
+        //myAnimator.SetTrigger("MusicFadeIn");
     }
 
     void SceneChange(Scene scene1, Scene scene2)

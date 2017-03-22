@@ -1350,7 +1350,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 528510867}
   m_HandleRect: {fileID: 528510866}
   m_Direction: 0
-  m_Value: 0.5
+  m_Value: 0
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1566,6 +1566,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1071656656}
         m_MethodName: GoToSelectScreen
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1071656656}
+        m_MethodName: PlayClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
