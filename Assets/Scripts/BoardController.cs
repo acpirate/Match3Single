@@ -181,6 +181,8 @@ public class BoardController : MonoBehaviour {
     //return tiles if there is no match
     public void ReturnSwap()
     {
+        //play tile swap sound in reverse to while returning the swap
+        SoundMasterController.instance.ReverseTileSwap();
         HandleSwap(TileArray[triedSwap.piece1Coords.x, triedSwap.piece1Coords.y],
             TileArray[triedSwap.piece2Coords.x, triedSwap.piece2Coords.y]);
     }
@@ -324,12 +326,15 @@ public class BoardController : MonoBehaviour {
     //if the a neighbor tile is already selected a swap will be attempted
     public void TileSelected(GameObject clickedTile)
     {
+        SoundMasterController.instance.PlayTileClick();
+
         TileController clickedTileController = clickedTile.GetComponent<TileController>();
 
         //no tile selected
         if (selectedTile == null) {
             selectedTile = clickedTile;
             clickedTileController.SetSelected(true);
+            SoundMasterController.instance.StartTileVibrate();
             return;
         }
         //a tile is selected
@@ -343,17 +348,21 @@ public class BoardController : MonoBehaviour {
             {
                 selectedTile = null;
                 clickedTileController.SetSelected(false);
+                SoundMasterController.instance.StopTileVibrate();
                 return;
             }
             //clicked tile is next to currently selected tile
             if (GetNeighbors(clickedTile).Contains(selectedTile))
             {
                 //fire the handle swap method
+                //play swap sound here because handeswap is called for reverse swaps
+                SoundMasterController.instance.PlayTileSwap();
                 HandleSwap(selectedTile, clickedTile);
                 //unselect the tiles
                 selectedTileController.SetSelected(false);
                 clickedTileController.SetSelected(true);
                 clickedTileController.SetSelected(false);
+                SoundMasterController.instance.StopTileVibrate();
                 selectedTile = null;
             }
             //clicked tile is not next to currently selected tile

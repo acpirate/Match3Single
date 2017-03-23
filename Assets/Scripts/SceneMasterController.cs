@@ -71,7 +71,7 @@ public class SceneMasterController : MonoBehaviour {
 
     public void PlayClick()
     {
-        soundMaster.PlayClick();
+        soundMaster.PlayButtonClick();
     }
 
 

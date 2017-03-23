@@ -7,8 +7,14 @@ public class SoundMasterController : MonoBehaviour {
     public static SoundMasterController instance;
 
     public AudioClip buttonClick;
+    public AudioClip tileClick;
+    public AudioClip tileSwap;
+    public AudioClip swapError;
+    public AudioSource tileVibrateAudioSource;
+    public AudioSource tileSwapAudioSource;
 
     AudioSource myAudioSource;
+
 
     void Awake()
     {
@@ -25,18 +31,38 @@ public class SoundMasterController : MonoBehaviour {
         }
     }
 
-    public void PlayClick()
+    public void PlayButtonClick()
     {
         myAudioSource.PlayOneShot(buttonClick);
     }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void PlayTileClick()
+    {
+        myAudioSource.PlayOneShot(tileClick);
+    }
+
+    public void StartTileVibrate()
+    {
+        tileVibrateAudioSource.Play();
+    }
+
+    public void StopTileVibrate()
+    {
+        tileVibrateAudioSource.Stop();
+    }
+
+    public void PlayTileSwap()
+    {
+
+        tileSwapAudioSource.Stop();
+        tileSwapAudioSource.clip = tileSwap;
+        tileSwapAudioSource.Play();
+    }
+
+    public void ReverseTileSwap()
+    {
+        tileSwapAudioSource.Stop();
+        tileSwapAudioSource.clip = swapError;
+        tileSwapAudioSource.Play();
+    }
 }

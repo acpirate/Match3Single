@@ -201,7 +201,7 @@ public class GameController : MonoBehaviour {
         }
         if (GameController.Instance.gameState == GAMESTATE.RETURNSWAP && Time.time > endAnimTime)
         {
-            //BoardController.Instance.callSnap = true;
+            BoardController.Instance.callSnap = true;
             GameController.Instance.gameState = GAMESTATE.CANSELECT;
         }
         if (GameController.Instance.gameState == GAMESTATE.REPLACEMATCHES && Time.time > endAnimTime)
