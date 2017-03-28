@@ -23,5 +23,9 @@ public class Constants  {
     public static readonly float CHAINMATCHMULTIPLIER = .25f;
     //seconds: time it takes to transition into or out of a scene
     public static readonly float SCENETRANSITIONTIME = .33f;
+	//seconds: bonus time
+	public static readonly float BONUSTIME = 10f;
+	//percent: maximum bonus amount as a percent of the match score
+	public static readonly float MAXBONUS = 100f;
 
 }

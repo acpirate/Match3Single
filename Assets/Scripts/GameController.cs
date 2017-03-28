@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class GameController : MonoBehaviour {
 
     public GameObject ScoreVFXPrefab;
@@ -13,7 +14,6 @@ public class GameController : MonoBehaviour {
     public GAMESTATE gameState = GAMESTATE.CANSELECT;
 
     public int score = 0;
-
 
     public bool dialogConfirm = false;
     public bool dialogDeny = false;
@@ -25,6 +25,8 @@ public class GameController : MonoBehaviour {
     public float endAnimTime;
 
     public int chain = 0;
+
+	public float bonusTimeLeft;
 
     void Awake()
     {
@@ -43,11 +45,15 @@ public class GameController : MonoBehaviour {
             possibleMatches = PossibleMatches().Count;
         }
 
+		bonusTimeLeft = Constants.BONUSTIME;
+
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (gameState != GAMESTATE.CANSELECT) GameStateAction();
+        GameStateAction();
+
+
     }
 
     //add score to score total
@@ -79,8 +85,19 @@ public class GameController : MonoBehaviour {
         //calculate chain multipler
         calculatedScore = Mathf.RoundToInt(calculatedScore * (1 + Constants.CHAINMATCHMULTIPLIER * chain));
 
-        ScoreVFX(matchToScore, calculatedScore.ToString());
+		//calculate time bonus
+		int timeBonus = Mathf.RoundToInt(calculatedScore * bonusTimeLeft/Constants.BONUSTIME);
+
+		string scoreString = calculatedScore.ToString();
+
+		if (timeBonus > 0) {
+			scoreString = scoreString+"+"+timeBonus.ToString();
+			calculatedScore+=timeBonus;
+		}
+
+		ScoreVFX(matchToScore, scoreString);
         AddScore(calculatedScore);
+
     }
 
     //generate animated score
@@ -217,6 +234,12 @@ public class GameController : MonoBehaviour {
         {
             QuitDialogCheck();
         }
+		if (GameController.Instance.gameState ==  GAMESTATE.CANSELECT) 
+		{
+			//subtract the time from the bonus
+			bonusTimeLeft-= Time.deltaTime;
+			if (bonusTimeLeft<0) bonusTimeLeft = 0f;
+		}
     }
 
     //action when quit dialog box is active
@@ -251,6 +274,9 @@ public class GameController : MonoBehaviour {
             NoPossibleMatchesCheck();
             GameController.Instance.gameState = GAMESTATE.CANSELECT;
             BoardController.Instance.callSnap = true;
+
+			//reset the bonus time
+			bonusTimeLeft = Constants.BONUSTIME;
         }
     }
 

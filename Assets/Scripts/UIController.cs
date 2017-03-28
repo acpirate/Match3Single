@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour {
 
@@ -10,6 +11,9 @@ public class UIController : MonoBehaviour {
     public GameObject dialogPanel;
     public Text scoreDisplay;
     public Text chainDisplay;
+
+	public TextMeshProUGUI bonusDisplayText;
+	public Image bonusOuterCircleImage;
 
     void Awake()
     {
@@ -24,6 +28,7 @@ public class UIController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         UpdateChainDisplay();
+		UpdateBonusDisplay();
 	}
 
     public void UpdateChainDisplay()
@@ -52,5 +57,16 @@ public class UIController : MonoBehaviour {
         scoreDisplay.text = "Score: " + scoreToShow.ToString();
     }
 
+	public void UpdateBonusDisplay() 
+	{
+		float angle = GameController.Instance.bonusTimeLeft/Constants.BONUSTIME;
+
+		string bonusDisplayString = string.Format("{0:00}%",GameController.Instance.bonusTimeLeft/Constants.BONUSTIME*100f);
+
+		bonusOuterCircleImage.fillAmount = angle;
+
+		bonusDisplayText.text = bonusDisplayString;
+
+	}
 
 }
