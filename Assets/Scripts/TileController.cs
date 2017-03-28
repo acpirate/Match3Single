@@ -18,7 +18,6 @@ public class TileController : MonoBehaviour {
 
     public bool dead = false;
 
-
     public Color redTile;
     public Color blueTile;
     public Color greenTile;
@@ -29,12 +28,13 @@ public class TileController : MonoBehaviour {
 
     Material myMaterial;
     Coords myCoords;
+	ParticleSystem myHint;
 
     void Awake()
     {
         myCoordDisplay = GetComponentInChildren<Text>();
         myMaterial = GetComponent<MeshRenderer>().material;
-
+		myHint = GetComponentInChildren<ParticleSystem>();
 
         Randomize();
     }
@@ -95,6 +95,16 @@ public class TileController : MonoBehaviour {
             myCoordDisplay.text = myCoords.ToString();
         }
     }
+
+	public void HintsOn() 
+	{
+		myHint.Play();	
+	}
+
+	public void HintsOff()
+	{
+		myHint.Stop();
+	}
 
     public void setCoords(Coords inCoords)
     {

@@ -28,6 +28,10 @@ public class GameController : MonoBehaviour {
 
 	public float bonusTimeLeft;
 
+	bool hintShown = false;
+
+	float nextHint;
+
     void Awake()
     {
         //fake singleton pattern
@@ -46,6 +50,7 @@ public class GameController : MonoBehaviour {
         }
 
 		bonusTimeLeft = Constants.BONUSTIME;
+		nextHint = Time.time + Constants.HINTTIME;
 
     }
 	
@@ -112,6 +117,23 @@ public class GameController : MonoBehaviour {
         scoreVFX.GetComponent<ScoreVFXController>().Initialize(inScore, scoreColor);
     }
 
+
+	//turn off all hints
+	public void AllHintsOff() 
+	{
+		BoardController.Instance.AllHintsOff();
+	}
+
+	public void ShowHint() 
+	{
+		hintShown = true;
+		List<Swap> possibleMatches = PossibleMatches();
+
+		Swap hintSwap = possibleMatches[Random.Range(0,possibleMatches.Count-1)];
+
+		BoardController.Instance.ShowHintAt(hintSwap.piece1Coords);
+		BoardController.Instance.ShowHintAt(hintSwap.piece2Coords);
+	}
 
     //end the game
     public void EndGame()
@@ -239,6 +261,12 @@ public class GameController : MonoBehaviour {
 			//subtract the time from the bonus
 			bonusTimeLeft-= Time.deltaTime;
 			if (bonusTimeLeft<0) bonusTimeLeft = 0f;
+
+			//check hint time
+			if (Time.time > nextHint && !hintShown) 
+			{
+				ShowHint();
+			}
 		}
     }
 
@@ -277,6 +305,9 @@ public class GameController : MonoBehaviour {
 
 			//reset the bonus time
 			bonusTimeLeft = Constants.BONUSTIME;
+			//reset hint time
+			hintShown= false;
+			nextHint = Time.time + Constants.HINTTIME;
         }
     }
 
@@ -294,10 +325,13 @@ public class GameController : MonoBehaviour {
     //check to see if there are any matches after a swap
     void CheckMatches()
     {
+		AllHintsOff();
         //failed to find any matches
         if (MatchController.Instance.getBaseMatches().Count < 1)
         {
             BoardController.Instance.ReturnSwap();
+			hintShown = false;
+			nextHint = Time.time + Constants.HINTTIME;
         }
         else
         {

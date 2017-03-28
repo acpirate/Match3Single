@@ -27,5 +27,6 @@ public class Constants  {
 	public static readonly float BONUSTIME = 10f;
 	//percent: maximum bonus amount as a percent of the match score
 	public static readonly float MAXBONUS = 100f;
-
+	//seconds: time until hint is shown
+	public static readonly float HINTTIME = 5f;
 }

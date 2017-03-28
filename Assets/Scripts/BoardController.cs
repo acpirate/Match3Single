@@ -461,4 +461,16 @@ public class BoardController : MonoBehaviour {
 
         return matchCenter;
     }
+
+	public void AllHintsOff() {
+		foreach(GameObject tile in TileArray) 
+		{
+			tile.GetComponent<TileController>().HintsOff();
+		}
+	}
+
+	public void ShowHintAt(Coords hintCoords) 
+	{
+		TileArray[hintCoords.x, hintCoords.y].GetComponent<TileController>().HintsOn();	
+	}
 }
