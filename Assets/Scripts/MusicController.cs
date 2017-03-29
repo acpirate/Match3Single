@@ -17,6 +17,7 @@ public class MusicController : MonoBehaviour {
     public AudioMixer musicMixer;
     public AudioMixerSnapshot musicOutSnap;
     public AudioMixerSnapshot musicInSnap;
+	public AudioMixer masterMixer;
 
 
     Animator myAnimator;
@@ -35,7 +36,11 @@ public class MusicController : MonoBehaviour {
 
         mySource = GetComponentInChildren<AudioSource>();
         myAnimator = GetComponent<Animator>();
+		masterMixer.updateMode = AudioMixerUpdateMode.UnscaledTime;
+		musicMixer.updateMode = AudioMixerUpdateMode.UnscaledTime;
+
     }
+
 
     void OnEnable()
     {
@@ -105,7 +110,7 @@ public class MusicController : MonoBehaviour {
 
     public void MusicFadeIn()
     {
-        musicInSnap.TransitionTo(3);
+        musicInSnap.TransitionTo(2f);
         //myAnimator.SetTrigger("MusicFadeIn");
     }
 
@@ -132,4 +137,5 @@ public class MusicController : MonoBehaviour {
             PlaySelectMusic();
         }
     }
+		
 }

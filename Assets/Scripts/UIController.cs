@@ -15,6 +15,8 @@ public class UIController : MonoBehaviour {
 	public TextMeshProUGUI bonusDisplayText;
 	public Image bonusOuterCircleImage;
 
+	public GameObject pausePanel;
+
     void Awake()
     {
         Instance = this;
@@ -67,6 +69,27 @@ public class UIController : MonoBehaviour {
 
 		bonusDisplayText.text = bonusDisplayString;
 
+	}
+
+	public void PauseClicked()
+	{
+//		Debug.Log("pauseclicked");
+		if (GameController.Instance.gameState==GAMESTATE.CANSELECT) 
+		{
+			GameController.Instance.gameState = GAMESTATE.PAUSED;
+			pausePanel.SetActive(true);
+			MusicController.instance.MusicFadeOut();
+			Time.timeScale = 0;
+
+		}
+		else if (GameController.Instance.gameState==GAMESTATE.PAUSED)
+		{
+			GameController.Instance.gameState = GAMESTATE.CANSELECT;
+			pausePanel.SetActive(false);
+			MusicController.instance.MusicFadeIn();
+			Time.timeScale = 1;
+			//unpause
+		}
 	}
 
 }

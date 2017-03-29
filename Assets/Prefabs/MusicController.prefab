@@ -161,3 +161,4 @@ MonoBehaviour:
     type: 2}
   musicInSnap: {fileID: 245213529764796776, guid: 6307887ce1172e84e9ef0ed6afa36db1,
     type: 2}
+  masterMixer: {fileID: 24100000, guid: 6307887ce1172e84e9ef0ed6afa36db1, type: 2}
