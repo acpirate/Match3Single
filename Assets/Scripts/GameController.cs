@@ -101,6 +101,7 @@ public class GameController : MonoBehaviour {
 		}
 
 		ScoreVFX(matchToScore, scoreString);
+        SoundMasterController.instance.PlayMatchSound();
         AddScore(calculatedScore);
 
     }

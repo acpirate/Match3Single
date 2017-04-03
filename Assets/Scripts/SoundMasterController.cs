@@ -10,6 +10,7 @@ public class SoundMasterController : MonoBehaviour {
     public AudioClip tileClick;
     public AudioClip tileSwap;
     public AudioClip swapError;
+    public AudioClip matchSound;
     public AudioSource tileVibrateAudioSource;
     public AudioSource tileSwapAudioSource;
 
@@ -39,6 +40,11 @@ public class SoundMasterController : MonoBehaviour {
     public void PlayTileClick()
     {
         myAudioSource.PlayOneShot(tileClick);
+    }
+
+    public void PlayMatchSound()
+    {
+        myAudioSource.PlayOneShot(matchSound,.4f);
     }
 
     public void StartTileVibrate()
